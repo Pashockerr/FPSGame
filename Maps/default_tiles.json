@@ -1,0 +1,8 @@
+{
+    "#":{
+        "TTexture": "./Textures/top.png",
+        "BTexture": "./Textures/bottom.png",
+        "LTexture": "./Textures/left.png",
+        "RTexture": "./Textures/right.png"
+    }
+}
