@@ -1,8 +1,12 @@
 {
-    "#":{
-        "TTexture": "./Textures/top.png",
-        "BTexture": "./Textures/bottom.png",
-        "LTexture": "./Textures/left.png",
-        "RTexture": "./Textures/right.png"
-    }
+    "EmptyChar": "-",
+    "Tiles": [
+        {
+            "Character": "#",
+            "TTexturePath": "./Textures/wall.png",
+            "BTexturePath": "./Textures/wall.png",
+            "LTexturePath": "./Textures/wall.png",
+            "RTexturePath": "./Textures/wall.png"
+        }
+    ]
 }
