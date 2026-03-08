@@ -49,9 +49,10 @@ namespace FPSGame
         private static unsafe void OnLoad()
         {
             IInputContext inputContext = _window!.CreateInput();
+            Engine.IsKeyPressed pressedEvent = null;
             for(int i = 0; i < inputContext.Keyboards.Count; ++i)
             {
-                inputContext.Keyboards[i].KeyDown += KeyDown;
+                pressedEvent = inputContext.Keyboards[i].IsKeyPressed;
             }
 
             _window!.FramebufferResize += (size) =>
@@ -136,11 +137,12 @@ namespace FPSGame
             _gl.TexParameter(GLEnum.Texture2D, GLEnum.TextureMagFilter, (int)TextureMagFilter.Nearest);
             _gl.BindTexture(TextureTarget.Texture2D, 0);
 
-            Engine.Init(TEXTURE_WIDTH, TEXTURE_HEIGHT, .25, .1);
+            Engine.Init(new Configuration("./config.json"), pressedEvent!);
         }
 
         private static void OnUpdate(double deltaTime)
         {
+            Engine.Tick(deltaTime);
         }
 
         private static unsafe void OnRender(double deltaTime)
@@ -150,8 +152,7 @@ namespace FPSGame
             _gl.ActiveTexture(TextureUnit.Texture0);
             _gl.BindTexture(TextureTarget.Texture2D, _texture);
             
-            _textureData = Engine.Render(new Vector2D<double>(8.0, 8.0), 3.14/4);
-            //Console.WriteLine(_textureData.Length);
+            _textureData = Engine.Render();
 
             fixed (byte* ptr = _textureData)
                 _gl.TexSubImage2D(TextureTarget.Texture2D, 0, 0, 0, TEXTURE_WIDTH, TEXTURE_HEIGHT, 
@@ -163,15 +164,6 @@ namespace FPSGame
             _gl.DrawElements(PrimitiveType.Triangles, 6, DrawElementsType.UnsignedInt, (void*) 0);
         }
 
-        private static void KeyDown(IKeyboard keyboard, Key key, int keyCode)
-        {
-            if(key == Key.Escape)
-                _window!.Close();
-        }
 
-        private static void RenderTexture()
-        {
-            
-        }
     }
 }

@@ -60,6 +60,8 @@ public class Map
 
     public Tile GetTile(int x, int y)
     {
+        if(x > Width - 1 || x < 0 || y > Height - 1 || y < 0)
+            return Tile.EMPTY;
         return _tiles[y * Width + x];
     }
 

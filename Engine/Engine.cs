@@ -1,91 +1,71 @@
-using System.Numerics;
+using Silk.NET.GLFW;
+using Silk.NET.Input;
 using Silk.NET.Maths;
 
 public static class Engine
 {
     private static bool _is_init = false;
     private static Map? _current_map;
-    private static Raycaster? _raycaster;
-    private static int _texture_width;
-    private static int _texture_height;
-    public static void Init(int textureWidth, int textureHeight, double viewportHeight, double viewportDistance)
+    private static Renderer? _renderer;
+    private static Configuration? _config;
+    private static Vector2D<double> _pos = new Vector2D<double>(5.0, 5.0);
+    private static double _angle = 0.0;
+    private static Vector2D<double> _userInput = new Vector2D<double>(0, 0);
+    private static IsKeyPressed? _keyPressed;
+
+    public delegate bool IsKeyPressed(Key key);
+
+    public static void Init(Configuration config, IsKeyPressed keyPressed)
     {
-        _texture_width = textureWidth;
-        _texture_height = textureHeight;
-
+        _config = config;
         _current_map = new Map("./Maps/default_map.json");
-        _raycaster = new Raycaster(500, 5.0, 3.14/2, _texture_width, viewportHeight, viewportDistance);
-
+        _renderer = new Renderer(config);
         _is_init = true;
+        _keyPressed = keyPressed;
     }
-    public static void Tick()
+
+    public static void Tick(double deltaTime)
     {
         if(!_is_init) throw new Exception("Didn't call the Init() method!");
-
-    }
-
-
-    public static byte[] Render(Vector2D<double> position, double angle)
-    {
-        int[] viewportTexture = new int[_texture_width * _texture_height]; 
-        var hitResults = _raycaster!.CastSector(_current_map!, position, angle);
-        for(int tX = 0; tX < _texture_width; ++tX)
+        
+        var inp = new Vector2D<double>();
+        if(_keyPressed(Key.W))
         {
-            if(hitResults[tX].Tile == Tile.EMPTY)   // Didn't hit tile, so 0-length column
-            {
-                continue;
-            }
-            double distance = (hitResults[tX].Position - position).Length;
-            // Console.WriteLine(distance);
-            double fisheyeCorrection = Math.Cos(_raycaster.Fov / 2 - (_raycaster.Fov / _texture_width) * tX);
-            Console.WriteLine(fisheyeCorrection);
-            double viewportProjHeight = 1 * (_raycaster.ViewportDistance / (distance + _raycaster.ViewportDistance)) / fisheyeCorrection; // / ((distance + _raycaster.ViewportDistance) / _raycaster.ViewportDistance);     // Tile height is 1 unit;
-            int columnH = (int)(_texture_height * viewportProjHeight);
-            //Console.WriteLine(viewportProjHeight);
-
-            int sY = (_texture_height - columnH) / 2;
-            for(int dY = 0; dY < columnH; ++dY)
-            {
-                byte gamma = (byte)(viewportProjHeight * 255);
-                viewportTexture[(sY + dY) * _texture_width + tX] = ColorToInt(gamma, gamma, gamma, 255);
-            }
+            inp.Y += 1.0;
         }
-
-        byte[] glTexture = new byte[_texture_height * _texture_width * 4];
-        // Console.WriteLine(glTexture.Length);
-        for(int i = 0; i < viewportTexture.Length; ++i)
+        if(_keyPressed(Key.A))
         {
-            var colors = IntToColor(viewportTexture[i]);
-            glTexture[i * 4] = colors[0];
-            glTexture[i * 4 + 1] = colors[1];
-            glTexture[i * 4 + 2] = colors[2];
-            glTexture[i * 4 + 3] = colors[3];
+            inp.X -= 1.0;
         }
+        if(_keyPressed(Key.S))
+        {
+            inp.Y -= 1.0;
+        }
+        if(_keyPressed(Key.D))
+        {
+            inp.X += 1.0;
+        }
+        _userInput = inp;
 
-        return glTexture;
+        if(_userInput.Y != 0)
+        {
+            var direction = new Vector2D<double>(Math.Cos(_angle), Math.Sin(_angle));
+            _pos += direction * deltaTime * _userInput.Y;
+        }
+        if(_userInput.X != 0)
+        {
+            _angle += _userInput.X * deltaTime;
+        }
+        Console.WriteLine($"{1/deltaTime} tps");
     }
 
-    public static int ColorToInt(byte r, byte g, byte b, byte a)
+    public static byte[] Render()
     {
-        int res = 0;
-        res += r << 24;
-        res += g << 16;
-        res += b << 8;
-        res += a;
-
-        return res;
+        return _renderer!.RenderViewportTexture(_current_map!, _pos, _angle);
     }
 
-    // RGBA: int 0x FF FF FF FF
-    //              R  G  B  A   
-    public static byte[] IntToColor(int color)
+    public static void KeyDown(IKeyboard keyboard, Key key, int keyCode)
     {
-        byte[] result = new byte[4];
-        result[0] = (byte)(color >> 24);
-        result[1] = (byte)(color >> 16);
-        result[2] = (byte)(color >> 8);
-        result[3] = (byte)color;
-
-        return result;
+        
     }
 }
