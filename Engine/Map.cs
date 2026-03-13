@@ -29,10 +29,7 @@ public class Map
         {
             Tile tile = new Tile
             {
-                TTexture = TextureManager.LoadTexture(tilesConfig.Tiles[i].TTexturePath ?? throw new Exception("TTexturePath shouldn't be null!")),
-                BTexture = TextureManager.LoadTexture(tilesConfig.Tiles[i].BTexturePath ?? throw new Exception("BTexturePath shouldn't be null!")),
-                LTexture = TextureManager.LoadTexture(tilesConfig.Tiles[i].LTexturePath ?? throw new Exception("LTexturePath shouldn't be null!")),
-                RTexture = TextureManager.LoadTexture(tilesConfig.Tiles[i].RTexturePath ?? throw new Exception("RTexturePath shouldn't be null!")),
+                Texture = TextureManager.LoadTexture(tilesConfig.Tiles[i].TexturePath ?? throw new Exception("TexturePath shouldn't be null!"))
             };
             tiles.Add(tilesConfig.Tiles[i].Character, tile);
         }
@@ -67,8 +64,8 @@ public class Map
 
     public Tile GetTile(Vector2D<double> position)
     {
-        int x = (int)Math.Round(position.X);
-        int y = (int)Math.Round(position.Y);
+        int x = (int)Math.Truncate(position.X);
+        int y = (int)Math.Truncate(position.Y);
         return GetTile(x, y); 
     }
 }

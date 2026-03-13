@@ -3,8 +3,5 @@ using System.Reflection.PortableExecutable;
 public class TileDto
 {
     public char Character { get; set; }
-    public string? TTexturePath { get; set; }
-    public string? BTexturePath { get; set; }
-    public string? LTexturePath { get; set; }
-    public string? RTexturePath { get; set; }
+    public string? TexturePath { get; set; }
 }

@@ -1,10 +1,12 @@
 public class Tile
 {
     public static readonly Tile EMPTY = new();
-    public Texture TTexture = TextureManager.EMPTY; // Top
-    public Texture BTexture = TextureManager.EMPTY; // Bottom
-    public Texture LTexture = TextureManager.EMPTY; // Left
-    public Texture RTexture = TextureManager.EMPTY; // Right
+    public Texture Texture = TextureManager.EMPTY;
+}
+
+public enum TileSide
+{
+    LEFT, RIGHT, BOTTOM, TOP
 }
 
 /*
@@ -20,4 +22,14 @@ public class Tile
 + 
 Y
 
+----------+U
+|     Texture UV map 
+|     ___________
+|     | L  | R  |
+|     |_________|      
+|     | B  | T  |
+|     |____|____|
+|              
++ 
+V
 */

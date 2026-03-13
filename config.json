@@ -2,6 +2,6 @@
     "TextureResolution": [800, 600],
     "Fov": 80,
     "ViewDistance": 10.0,
-    "RayCount": 1600,
-    "RaySteps": 1000
+    "RayCount": 800,
+    "RaySteps": 2500
 }

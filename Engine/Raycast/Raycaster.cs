@@ -1,3 +1,4 @@
+using Microsoft.Win32.SafeHandles;
 using Silk.NET.Maths;
 
 public class Raycaster(int steps, double rayLength, double fov, int rayCount, double viewportHeight, double focalLength, bool fisheyeCorrection)
@@ -58,6 +59,24 @@ public class Raycaster(int steps, double rayLength, double fov, int rayCount, do
             if (_fisheyeCorrection)
             {
                 correctionCoeffitient = Math.Cos(dA - _fov / 2);
+            }
+            result[i++] = CastRay(map, position, startAngle + deltaAngle, correctionCoeffitient);
+        }
+        return result;
+    }
+
+    public MapHitResult[] CastSectorPart(Map map, Vector2D<double> position, double angle, int part, int totalParts)
+    {
+        var startAngle = angle - _fov / 2 + (_fov/totalParts)*((double)(part - 1)/totalParts);
+        var dA = _fov / _rayCount;
+        MapHitResult[] result = new MapHitResult[_rayCount / totalParts];
+        int i = 0;
+        double correctionCoeffitient = 1.0;
+        for(double deltaAngle = 0; deltaAngle < _fov/totalParts; deltaAngle += dA)
+        {
+            if (_fisheyeCorrection)
+            {
+                correctionCoeffitient = Math.Cos(Math.Abs(angle - (startAngle + deltaAngle)));
             }
             result[i++] = CastRay(map, position, startAngle + deltaAngle, correctionCoeffitient);
         }

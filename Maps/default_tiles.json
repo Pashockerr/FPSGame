@@ -3,10 +3,7 @@
     "Tiles": [
         {
             "Character": "#",
-            "TTexturePath": "./Textures/wall.png",
-            "BTexturePath": "./Textures/wall.png",
-            "LTexturePath": "./Textures/wall.png",
-            "RTexturePath": "./Textures/wall.png"
+            "TexturePath": "./Textures/wall.png"
         }
     ]
 }

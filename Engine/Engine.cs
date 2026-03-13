@@ -61,7 +61,36 @@ public static class Engine
 
     public static byte[] Render()
     {
-        return _renderer!.RenderViewportTexture(_current_map!, _pos, _angle);
+        byte[] result = new byte[_config.TextureResolution.X * _config.TextureResolution.Y * 4];
+        byte[] parts = new byte[_config.TextureResolution.X * _config.TextureResolution.Y * 4];
+        byte[] part0 = _renderer!.RenderViewportTexture(_current_map!, _pos, _angle, 1, 2);
+        byte[] part1 = _renderer!.RenderViewportTexture(_current_map!, _pos, _angle, 2, 2);
+        Console.WriteLine(part0.Length);
+        Console.WriteLine(part1.Length);
+        part0.CopyTo(parts, 0);
+        part1.CopyTo(parts, parts.Length / 2 - 1);
+
+        int partSize = parts.Length / 2;
+        int mainX = 0;
+        int mainY = 0;
+
+        for(int p = 0; p < 2; ++p)
+        {
+            for(int x = 0; x < _config.TextureResolution.X / 2; ++x)
+            {
+                for(int y = 0; y < _config.TextureResolution.Y / 2; ++y)
+                {
+                    result[(mainY * _config.TextureResolution.X + mainX) * 4] = parts[p * partSize + y * _config.TextureResolution.X / 2 + x];
+                    result[(mainY * _config.TextureResolution.X + mainX) * 4 + 1] = parts[p * partSize + y * _config.TextureResolution.X / 2 + x + 1];
+                    result[(mainY * _config.TextureResolution.X + mainX) * 4 + 2] = parts[p * partSize + y * _config.TextureResolution.X / 2 + x + 2];
+                    result[(mainY * _config.TextureResolution.X + mainX) * 4 + 3] = parts[p * partSize + y * _config.TextureResolution.X / 2 + x + 3];
+                    ++mainY;
+                }
+                ++mainX;
+            }
+        }
+
+        return result;  // TODO: fix texture stitching
     }
 
     public static void KeyDown(IKeyboard keyboard, Key key, int keyCode)
