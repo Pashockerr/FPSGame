@@ -27,6 +27,11 @@ public class Renderer(Configuration configuration)
             var hitPos = hitResults[hRX].Position;
             var tile = hitResults[hRX].Tile;
             // Get texture coordinates
+            
+            double truncX = Math.Truncate(hitPos.X);
+            double truncY = Math.Truncate(hitPos.Y);
+            // TODO: new alg for texturing
+
             double xFrac = hitPos.X - Math.Truncate(hitPos.X);
             double yFrac = hitPos.Y - Math.Truncate(hitPos.Y);
             TileSide side = TileSide.LEFT;
@@ -62,7 +67,7 @@ public class Renderer(Configuration configuration)
                 side = TileSide.TOP;
             }
 
-            double fisheyeCorrection = Math.Cos(_raycaster.Fov / 2 - (_raycaster.Fov / _textureWidth) * tX);
+            double fisheyeCorrection = 1;//Math.Cos(_raycaster.Fov / 2 - (_raycaster.Fov / _textureWidth) * tX);
             double viewportProjHeight = (_raycaster.ViewportDistance / (distance + _raycaster.ViewportDistance) / fisheyeCorrection); // / ((distance + raycaster.ViewportDistance) / raycaster.ViewportDistance);     // Tile height is 1 unit;
             int columnH = (int)(_textureHeight * viewportProjHeight / VIEWPORT_HEIGHT);
             columnH = columnH > _textureHeight ? _textureHeight : columnH;

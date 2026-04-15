@@ -65,14 +65,15 @@ public class Raycaster(int steps, double rayLength, double fov, int rayCount, do
         return result;
     }
 
-    public MapHitResult[] CastSectorPart(Map map, Vector2D<double> position, double angle, int part, int totalParts)
+// partIndex starts with 0
+    public MapHitResult[] CastSectorPart(Map map, Vector2D<double> position, double angle, int partIndex, int totalParts)
     {
-        var startAngle = angle - _fov / 2 + (_fov/totalParts)*((double)(part - 1)/totalParts);
+        var startAngle = angle - _fov / 2.0 + (_fov/(double)totalParts)*partIndex;
         var dA = _fov / _rayCount;
         MapHitResult[] result = new MapHitResult[_rayCount / totalParts];
         int i = 0;
         double correctionCoeffitient = 1.0;
-        for(double deltaAngle = 0; deltaAngle < _fov/totalParts; deltaAngle += dA)
+        for(double deltaAngle = 0; deltaAngle <= _fov/totalParts; deltaAngle += dA)
         {
             if (_fisheyeCorrection)
             {

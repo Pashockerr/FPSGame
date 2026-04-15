@@ -12,6 +12,7 @@ public static class Engine
     private static double _angle = 0.0;
     private static Vector2D<double> _userInput = new Vector2D<double>(0, 0);
     private static IsKeyPressed? _keyPressed;
+    private static int fps_timer;
 
     public delegate bool IsKeyPressed(Key key);
 
@@ -56,39 +57,33 @@ public static class Engine
         {
             _angle += _userInput.X * deltaTime;
         }
-        Console.WriteLine($"{1/deltaTime} tps");
+        fps_timer++;
+        if(fps_timer >= 100)
+        {
+            fps_timer = 0;
+            Console.WriteLine($"{1/deltaTime} tps");
+        }
     }
 
     public static byte[] Render()
     {
         byte[] result = new byte[_config.TextureResolution.X * _config.TextureResolution.Y * 4];
-        byte[] parts = new byte[_config.TextureResolution.X * _config.TextureResolution.Y * 4];
-        byte[] part0 = _renderer!.RenderViewportTexture(_current_map!, _pos, _angle, 1, 2);
-        byte[] part1 = _renderer!.RenderViewportTexture(_current_map!, _pos, _angle, 2, 2);
-        Console.WriteLine(part0.Length);
-        Console.WriteLine(part1.Length);
-        part0.CopyTo(parts, 0);
-        part1.CopyTo(parts, parts.Length / 2 - 1);
-
-        int partSize = parts.Length / 2;
-        int mainX = 0;
-        int mainY = 0;
-
-        for(int p = 0; p < 2; ++p)
+        const int THREADS_NUMBER = 32;
+        Parallel.For(0, THREADS_NUMBER, (i) =>
         {
-            for(int x = 0; x < _config.TextureResolution.X / 2; ++x)
+            byte[] part = _renderer!.RenderViewportTexture(_current_map!, _pos, _angle, i, THREADS_NUMBER);
+            int x_shift = (_config.TextureResolution.X / THREADS_NUMBER) * i;
+            for(int y = 0; y < _config.TextureResolution.Y; ++y)
             {
-                for(int y = 0; y < _config.TextureResolution.Y / 2; ++y)
+                for(int x = 0; x < _config.TextureResolution.X / THREADS_NUMBER; ++x)
                 {
-                    result[(mainY * _config.TextureResolution.X + mainX) * 4] = parts[p * partSize + y * _config.TextureResolution.X / 2 + x];
-                    result[(mainY * _config.TextureResolution.X + mainX) * 4 + 1] = parts[p * partSize + y * _config.TextureResolution.X / 2 + x + 1];
-                    result[(mainY * _config.TextureResolution.X + mainX) * 4 + 2] = parts[p * partSize + y * _config.TextureResolution.X / 2 + x + 2];
-                    result[(mainY * _config.TextureResolution.X + mainX) * 4 + 3] = parts[p * partSize + y * _config.TextureResolution.X / 2 + x + 3];
-                    ++mainY;
+                    result[(y * _config.TextureResolution.X + x + x_shift) * 4] = part[(y * _config.TextureResolution.X / THREADS_NUMBER + x) * 4];
+                    result[(y * _config.TextureResolution.X + x + x_shift) * 4 + 1] = part[(y * _config.TextureResolution.X / THREADS_NUMBER + x) * 4 + 1];
+                    result[(y * _config.TextureResolution.X + x + x_shift) * 4 + 2] = part[(y * _config.TextureResolution.X / THREADS_NUMBER + x) * 4 + 2];
+                    result[(y * _config.TextureResolution.X + x + x_shift) * 4 + 3] = part[(y * _config.TextureResolution.X / THREADS_NUMBER + x) * 4 + 3];
                 }
-                ++mainX;
             }
-        }
+        });
 
         return result;  // TODO: fix texture stitching
     }
