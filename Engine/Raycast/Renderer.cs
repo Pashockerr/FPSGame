@@ -28,8 +28,6 @@ public class Renderer(Configuration configuration)
             var tile = hitResults[hRX].Tile;
             // Get texture coordinates
             
-            double truncX = Math.Truncate(hitPos.X);
-            double truncY = Math.Truncate(hitPos.Y);
             // TODO: new alg for texturing
 
             double xFrac = hitPos.X - Math.Truncate(hitPos.X);

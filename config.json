@@ -3,5 +3,6 @@
     "Fov": 80,
     "ViewDistance": 10.0,
     "RayCount": 800,
-    "RaySteps": 2500
+    "RaySteps": 2500,
+    "ThreadCount": 32
 }

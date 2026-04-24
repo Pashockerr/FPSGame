@@ -73,7 +73,7 @@ public class Raycaster(int steps, double rayLength, double fov, int rayCount, do
         MapHitResult[] result = new MapHitResult[_rayCount / totalParts];
         int i = 0;
         double correctionCoeffitient = 1.0;
-        for(double deltaAngle = 0; deltaAngle <= _fov/totalParts; deltaAngle += dA)
+        for(double deltaAngle = 0; deltaAngle <= _fov/totalParts; deltaAngle += dA) // TODO: make that division once in separate variable to fix performance(fix not only here!)
         {
             if (_fisheyeCorrection)
             {

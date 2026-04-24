@@ -32,12 +32,14 @@ namespace FPSGame
         private static uint _texture;
         private const int TEXTURE_WIDTH = 800;
         private const int TEXTURE_HEIGHT = 600;
+        private static Engine? _engine;
         public static void Main(string[] args)
         {
             WindowOptions options = WindowOptions.Default with
             {
                 Size = new Vector2D<int>(800, 600),
-                Title = "Game"
+                Title = "Game",
+                VSync = false
             };
             _window = Window.Create(options);
             _window.Load += OnLoad;
@@ -49,7 +51,7 @@ namespace FPSGame
         private static unsafe void OnLoad()
         {
             IInputContext inputContext = _window!.CreateInput();
-            Engine.IsKeyPressed pressedEvent = null;
+            Engine.IsKeyPressed? pressedEvent = null;
             for(int i = 0; i < inputContext.Keyboards.Count; ++i)
             {
                 pressedEvent = inputContext.Keyboards[i].IsKeyPressed;
@@ -59,7 +61,6 @@ namespace FPSGame
             {
                 _gl!.Viewport(size);
             };
-
             _gl = _window.CreateOpenGL();
             _gl.ClearColor(Color.Black);
             _vao = _gl.GenVertexArray();
@@ -137,12 +138,13 @@ namespace FPSGame
             _gl.TexParameter(GLEnum.Texture2D, GLEnum.TextureMagFilter, (int)TextureMagFilter.Nearest);
             _gl.BindTexture(TextureTarget.Texture2D, 0);
 
-            Engine.Init(new Configuration("./config.json"), pressedEvent!);
+            _engine = new Engine(new Configuration("./config.json"),
+                                pressedEvent ?? throw new InvalidDataException("Can't find keyboard!"));
         }
 
         private static void OnUpdate(double deltaTime)
         {
-            Engine.Tick(deltaTime);
+            _engine!.Tick(deltaTime);
         }
 
         private static unsafe void OnRender(double deltaTime)
@@ -152,7 +154,7 @@ namespace FPSGame
             _gl.ActiveTexture(TextureUnit.Texture0);
             _gl.BindTexture(TextureTarget.Texture2D, _texture);
             
-            _textureData = Engine.Render();
+            _textureData = _engine!.Render();
 
             fixed (byte* ptr = _textureData)
                 _gl.TexSubImage2D(TextureTarget.Texture2D, 0, 0, 0, TEXTURE_WIDTH, TEXTURE_HEIGHT, 

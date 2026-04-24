@@ -7,4 +7,5 @@ public class ConfigurationDto
     public int RaySteps { get; set; }
     public double FocalLength { get; set; }
     public double ViewportHeight { get; set; }
+    public int ThreadCount { get; set; }
 }

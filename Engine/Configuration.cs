@@ -8,6 +8,7 @@ public class Configuration
     private double _viewDistance;
     private int _rayCount;
     private int _raySteps;
+    private int _threadCount;
 
     public Vector2D<int> TextureResolution
     {
@@ -60,6 +61,20 @@ public class Configuration
         }
     }
 
+    public int ThreadCount
+    {
+        get { return _threadCount; }
+        set
+        {
+            if(value < 0)
+                throw new InvalidDataException("ThreadCount shouldn't be negative!");
+            double pow2 = Math.Log2(value);
+            if(Math.Truncate(pow2) != pow2)
+                throw new InvalidDataException("Thread count should be power of 2!");
+            _threadCount = value;
+        }
+    }
+
     public Configuration(string filePath)
     {
         string content = File.ReadAllText(filePath);
@@ -71,14 +86,16 @@ public class Configuration
         ViewDistance = cD.ViewDistance;
         RayCount = cD.RayCount;
         RaySteps = cD.RaySteps;
+        ThreadCount = cD.ThreadCount;
     }
 
-    public Configuration(Vector2D<int> textureResolution, double fov, double viewDistance, int rayCount, int raySteps)
+    public Configuration(Vector2D<int> textureResolution, double fov, double viewDistance, int rayCount, int raySteps, int threadCount)
     {
         TextureResolution = textureResolution;
         Fov = fov;
         ViewDistance = viewDistance;
         RayCount = rayCount;
         RaySteps = raySteps;
+        ThreadCount = threadCount;
     }
 }
