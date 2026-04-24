@@ -4,7 +4,6 @@ using Silk.NET.Input;
 using Silk.NET.OpenGL;
 using System.Drawing;
 using StbImageSharp;
-using System.Reflection.Metadata;
 
 namespace FPSGame
 {

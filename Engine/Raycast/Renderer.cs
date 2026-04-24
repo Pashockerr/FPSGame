@@ -43,24 +43,24 @@ public class Renderer(Configuration configuration)
             double tFrac = Math.Abs(1 - yFrac);
 
             // Left side. U = yFrac
-            if (lFrac < TEXTURE_EPSILON && lFrac - tFrac < 0 && lFrac - bFrac < 0)
+            if (lFrac < rFrac && lFrac < tFrac && lFrac < bFrac)
             {
                 u = yFrac;
             }
             // Right side. U = 1 - yFrac
-            else if (rFrac < TEXTURE_EPSILON && rFrac - tFrac < 0 && rFrac - bFrac < 0)
+            else if (rFrac < lFrac && rFrac < tFrac && rFrac < bFrac)
             {
                 u = 1 - yFrac; // Mirror
                 side = TileSide.RIGHT;
             }
             // Bottom side. U = xFrac
-            else if (bFrac < TEXTURE_EPSILON && bFrac - lFrac < 0 && bFrac - rFrac < 0)
+            else if (bFrac < lFrac && bFrac < rFrac && bFrac < tFrac)
             {
                 u = 1 - xFrac;
                 side = TileSide.BOTTOM;
             }
             // Top side. U = 1 - xFrac
-            else if(tFrac < TEXTURE_EPSILON && tFrac - lFrac < 0 && tFrac - rFrac < 0)
+            else if(tFrac < bFrac && tFrac < lFrac && tFrac < rFrac)
             {
                 u = xFrac;
                 side = TileSide.TOP;
