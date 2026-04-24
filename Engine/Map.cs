@@ -25,7 +25,7 @@ public class Map
         {
             throw new Exception("TilesConfigDto.Tiles shouldn't be null!");
         }
-        for(int i = 0; i < tilesConfig.Tiles.Count(); ++i)
+        for(int i = 0; i < tilesConfig.Tiles.Length; ++i)
         {
             Tile tile = new Tile
             {

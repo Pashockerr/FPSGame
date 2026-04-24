@@ -15,7 +15,8 @@ public class Renderer(Configuration configuration)
     {
         byte[] viewportTexture = new byte[_textureWidth * _textureHeight * 4 / totalThreads]; 
         var hitResults = _raycaster!.CastSectorPart(map!, position, angle, thread, totalThreads);
-        for(int tX = 0; tX < _textureWidth / totalThreads; ++tX)
+        int partWidth = _textureWidth / totalThreads;
+        for(int tX = 0; tX < partWidth; ++tX)
         {
             int hRX = hitResults.Length * tX / (_textureWidth / totalThreads);
             if(hitResults[hRX].Tile == Tile.EMPTY)   // Didn't hit tile, so 0-length column

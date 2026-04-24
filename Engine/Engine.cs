@@ -12,11 +12,11 @@ public class Engine
     private double _angle = 0.0;
     private Vector2D<double> _userInput = new Vector2D<double>(0, 0);
     private IsKeyPressed _keyPressed;
-    private int fps_timer;
+    private int _fps_timer;
     private int _texture_width;
     private int _texture_height;
     private int _texture_part_width;
-    private Context _context;
+    // private Context? _context;
 
     public delegate bool IsKeyPressed(Key key);
 
@@ -29,11 +29,11 @@ public class Engine
         _texture_height = _config.TextureResolution.Y;
         _texture_width = _config.TextureResolution.X;
         _texture_part_width = _texture_width / _config.ThreadCount;
-        _context = Context.Create(builder => builder.AllAccelerators());
-        foreach(var accelerator in _context.Devices)
-        {
-            Console.WriteLine(accelerator);
-        }
+        // _context = Context.Create(builder => builder.AllAccelerators());
+        // foreach(var accelerator in _context.Devices)
+        // {
+        //     Console.WriteLine(accelerator);
+        // }
     }
 
     public void Tick(double deltaTime)
@@ -66,10 +66,10 @@ public class Engine
         {
             _angle += _userInput.X * deltaTime;
         }
-        fps_timer++;
-        if(fps_timer >= 100)
+        _fps_timer++;
+        if(_fps_timer >= 100)
         {
-            fps_timer = 0;
+            _fps_timer = 0;
             Console.WriteLine($"{1/deltaTime} tps");
         }
     }
